@@ -1,3 +1,6 @@
+import '../pages/index.css';
+import { initialCards } from './cards.js';
+
 const cardTemplate = document.querySelector('#card-template');
 const cardContainer = document.querySelector('.places__list');
 
@@ -16,6 +19,8 @@ function createCard(data, deleteCallback, template) {
   const cardImage = fragment.querySelector('.card__image');
   cardImage.src = data.link;
   cardImage.name = data.name;
+
+  console.log(cardImage);
   fragment.querySelector('.card__delete-button').addEventListener('click', () => {
     deleteCallback(cardItem);
   });
