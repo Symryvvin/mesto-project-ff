@@ -29,7 +29,7 @@ export const initialCards = [
 
 const cardImageModal = document.querySelector('.popup_type_image');
 
-export function createCard(data, template, deleteFunction = deleteCardCallback, openImageFunctuin = openCardImageCallback) {
+export function createCard(data, template) {
   const fragment = template.content.cloneNode(true);
 
   const cardItem = fragment.querySelector('.card');
