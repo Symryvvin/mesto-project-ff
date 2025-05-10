@@ -29,7 +29,7 @@ export const initialCards = [
 
 const cardImageModal = document.querySelector('.popup_type_image');
 
-export function createCard(data, template) {
+export function createCard(data, template, deleteCardCallback, openCardImageCallback, likeCardCallback) {
   const fragment = template.content.cloneNode(true);
 
   const cardItem = fragment.querySelector('.card');
@@ -49,11 +49,11 @@ export function createCard(data, template) {
   return fragment;
 }
 
-function deleteCardCallback(cardItem) {
+export function deleteCardCallback(cardItem) {
   cardItem.remove();
 }
 
-function openCardImageCallback(cardImageSrc, cardImageName) {
+export function openCardImageCallback(cardImageSrc, cardImageName) {
   const image = cardImageModal.querySelector('img');
 
   image.src = cardImageSrc;
@@ -62,4 +62,8 @@ function openCardImageCallback(cardImageSrc, cardImageName) {
   cardImageModal.querySelector('.popup__caption').textContent = cardImageName;
 
   modal.openModal(cardImageModal);
+}
+
+export function likeCardCallback(cardItem) {
+  console.log(cardItem);
 }

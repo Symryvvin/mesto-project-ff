@@ -1,12 +1,12 @@
 import '../pages/index.css';
-import { initialCards, createCard } from './cards.js';
+import * as cards from './cards.js';
 import * as modal from './components/modal.js';
 
 const cardTemplate = document.querySelector('#card-template');
 const cardContainer = document.querySelector('.places__list');
 
-initialCards.forEach((card) => {
-  cardContainer.append(createCard(card, cardTemplate));
+cards.initialCards.forEach((card) => {
+  cardContainer.append(cards.createCard(card, cardTemplate, cards.deleteCardCallback, cards.openCardImageCallback, cards.likeCardCallback));
 });
 
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -51,7 +51,7 @@ addCardFormElement.addEventListener('submit', (e) => {
     link: linkInput.value,
   };
 
-  cardContainer.prepend(createCard(cardData, cardTemplate));
+  cardContainer.prepend(cards.createCard(cardData, cardTemplate, cards.deleteCardCallback, cards.openCardImageCallback, cards.likeCardCallback));
 
   addCardFormElement.reset();
   modal.closeModal(addCardModal);
