@@ -1,45 +1,30 @@
-import { openModal } from './modal.js';
-
-const cardImageModal = document.querySelector('.popup_type_image');
-
 export function createCard(data, template, deleteCardCallback, openCardImageCallback, likeCardCallback) {
-  const fragment = template.content.cloneNode(true);
+  const card = template.content.querySelector('.card').cloneNode(true);
 
-  const cardItem = fragment.querySelector('.card');
-  const cardImage = fragment.querySelector('.card__image');
+  const cardImage = card.querySelector('.card__image');
   cardImage.src = data.link;
   cardImage.name = data.name;
+  cardImage.alt = data.name;
 
-  fragment.querySelector('.card__delete-button').addEventListener('click', () => {
-    deleteCardCallback(cardItem);
+  card.querySelector('.card__delete-button').addEventListener('click', () => {
+    deleteCardCallback(card);
   });
-  fragment.querySelector('.card__title').textContent = data.name;
+  card.querySelector('.card__title').textContent = data.name;
 
-  const likeButton = fragment.querySelector('.card__like-button');
+  const likeButton = card.querySelector('.card__like-button');
   likeButton.addEventListener('click', () => {
     likeCardCallback(likeButton);
   });
 
   cardImage.addEventListener('click', () => {
-    openCardImageCallback(cardImage.src, cardImage.name);
+    openCardImageCallback(data.link, data.name);
   });
 
-  return fragment;
+  return card;
 }
 
 export function deleteCard(card) {
   card.remove();
-}
-
-export function openCardImage(cardImageSrc, cardImageName) {
-  const image = cardImageModal.querySelector('img');
-
-  image.src = cardImageSrc;
-  image.alt = cardImageName;
-
-  cardImageModal.querySelector('.popup__caption').textContent = cardImageName;
-
-  openModal(cardImageModal);
 }
 
 export function likeCard(button) {

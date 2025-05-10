@@ -1,23 +1,51 @@
 import '../pages/index.css';
 import { cards } from './cards.js';
-import { createCard, deleteCard, likeCard, openCardImage } from './components/card.js';
+import { createCard, deleteCard, likeCard } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
+
+const modals = document.querySelectorAll('.popup');
 
 const cardTemplate = document.querySelector('#card-template');
 const cardContainer = document.querySelector('.places__list');
+const cardImageModal = document.querySelector('.popup_type_image');
+const cardImageElement = cardImageModal.querySelector('img');
+const cardCaptionElement = cardImageModal.querySelector('.popup__caption');
+
+const profileEditButton = document.querySelector('.profile__edit-button');
+const profileEditModal = document.querySelector('.popup_type_edit');
+const profileEditFormElement = document.querySelector('.popup__form[name=edit-profile]');
+const profileTitle = document.querySelector('.profile__title');
+const profileDescription = document.querySelector('.profile__description');
+
+const profileNameInput = profileEditModal.querySelector('input[name=name]');
+const profileDescriptionInput = profileEditModal.querySelector('input[name=description]');
+
+const addCardButton = document.querySelector('.profile__add-button');
+const addCardModal = document.querySelector('.popup_type_new-card');
+const addCardFormElement = document.querySelector('.popup__form[name=new-place]');
+
+const placeNameInput = addCardModal.querySelector('input[name=place-name]');
+const linkInput = addCardModal.querySelector('input[name=link]');
+
+modals.forEach((modal) => {
+  modal.addEventListener('click', (event) => {
+    if (event.target.classList.contains('popup__close') || event.target.classList.contains('popup')) {
+      closeModal(modal);
+    }
+  });
+});
 
 cards.forEach((card) => {
   cardContainer.append(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard));
 });
 
-const profileEditButton = document.querySelector('.profile__edit-button');
-const profileEditModal = document.querySelector('.popup_type_edit');
-const profileEditFormElement = document.querySelector('.popup__form[name=edit-profile');
-const profileTitle = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
+function openCardImage(link, name) {
+  cardImageElement.src = link;
+  cardImageElement.alt = name;
+  cardCaptionElement.textContent = name;
 
-const profileNameInput = profileEditModal.querySelector('input[name=name');
-const profileDescriptionInput = profileEditModal.querySelector('input[name=description]');
+  openModal(cardImageModal);
+}
 
 profileEditButton.addEventListener('click', (e) => {
   profileNameInput.value = profileTitle.textContent;
@@ -26,25 +54,22 @@ profileEditButton.addEventListener('click', (e) => {
   openModal(profileEditModal);
 });
 
-profileEditFormElement.addEventListener('submit', (e) => {
+function handleProfileEditForm(e) {
   e.preventDefault();
 
   profileTitle.textContent = profileNameInput.value;
   profileDescription.textContent = profileDescriptionInput.value;
-});
 
-const addCardButton = document.querySelector('.profile__add-button');
-const addCardModal = document.querySelector('.popup_type_new-card');
-const addCardFormElement = document.querySelector('.popup__form[name=new-place');
+  closeModal(profileEditModal);
+}
+
+profileEditFormElement.addEventListener('submit', handleProfileEditForm);
 
 addCardButton.addEventListener('click', (e) => {
   openModal(addCardModal);
 });
 
-const placeNameInput = addCardModal.querySelector('input[name=place-name]');
-const linkInput = addCardModal.querySelector('input[name=link]');
-
-addCardFormElement.addEventListener('submit', (e) => {
+function handleAddCardForm(e) {
   e.preventDefault();
 
   const cardData = {
@@ -56,4 +81,6 @@ addCardFormElement.addEventListener('submit', (e) => {
 
   addCardFormElement.reset();
   closeModal(addCardModal);
-});
+}
+
+addCardFormElement.addEventListener('submit', handleAddCardForm);
