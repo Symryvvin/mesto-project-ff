@@ -1,6 +1,4 @@
-import * as modal from './components/modal.js';
-
-export const initialCards = [
+const initialCards = [
   {
     name: 'Архыз',
     link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg',
@@ -27,48 +25,4 @@ export const initialCards = [
   },
 ];
 
-const cardImageModal = document.querySelector('.popup_type_image');
-
-export function createCard(data, template, deleteCardCallback, openCardImageCallback, likeCardCallback) {
-  const fragment = template.content.cloneNode(true);
-
-  const cardItem = fragment.querySelector('.card');
-  const cardImage = fragment.querySelector('.card__image');
-  cardImage.src = data.link;
-  cardImage.name = data.name;
-
-  fragment.querySelector('.card__delete-button').addEventListener('click', () => {
-    deleteCardCallback(cardItem);
-  });
-  fragment.querySelector('.card__title').textContent = data.name;
-
-  const likeButton = fragment.querySelector('.card__like-button');
-  likeButton.addEventListener('click', () => {
-    likeCardCallback(likeButton);
-  });
-
-  cardImage.addEventListener('click', () => {
-    openCardImageCallback(cardImage.src, cardImage.name);
-  });
-
-  return fragment;
-}
-
-export function deleteCardCallback(cardItem) {
-  cardItem.remove();
-}
-
-export function openCardImageCallback(cardImageSrc, cardImageName) {
-  const image = cardImageModal.querySelector('img');
-
-  image.src = cardImageSrc;
-  image.alt = cardImageName;
-
-  cardImageModal.querySelector('.popup__caption').textContent = cardImageName;
-
-  modal.openModal(cardImageModal);
-}
-
-export function likeCardCallback(button) {
-  button.classList.toggle('card__like-button_is-active');
-}
+export { initialCards as cards };

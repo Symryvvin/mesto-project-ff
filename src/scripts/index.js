@@ -1,12 +1,13 @@
 import '../pages/index.css';
-import * as cards from './cards.js';
-import * as modal from './components/modal.js';
+import { cards } from './cards.js';
+import { createCard, deleteCard, likeCard, openCardImage } from './components/card.js';
+import { closeModal, openModal } from './components/modal.js';
 
 const cardTemplate = document.querySelector('#card-template');
 const cardContainer = document.querySelector('.places__list');
 
-cards.initialCards.forEach((card) => {
-  cardContainer.append(cards.createCard(card, cardTemplate, cards.deleteCardCallback, cards.openCardImageCallback, cards.likeCardCallback));
+cards.forEach((card) => {
+  cardContainer.append(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard));
 });
 
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -22,7 +23,7 @@ profileEditButton.addEventListener('click', (e) => {
   profileNameInput.value = profileTitle.textContent;
   profileDescriptionInput.value = profileDescription.textContent;
 
-  modal.openModal(profileEditModal);
+  openModal(profileEditModal);
 });
 
 profileEditFormElement.addEventListener('submit', (e) => {
@@ -37,7 +38,7 @@ const addCardModal = document.querySelector('.popup_type_new-card');
 const addCardFormElement = document.querySelector('.popup__form[name=new-place');
 
 addCardButton.addEventListener('click', (e) => {
-  modal.openModal(addCardModal);
+  openModal(addCardModal);
 });
 
 const placeNameInput = addCardModal.querySelector('input[name=place-name]');
@@ -51,8 +52,8 @@ addCardFormElement.addEventListener('submit', (e) => {
     link: linkInput.value,
   };
 
-  cardContainer.prepend(cards.createCard(cardData, cardTemplate, cards.deleteCardCallback, cards.openCardImageCallback, cards.likeCardCallback));
+  cardContainer.prepend(createCard(cardData, cardTemplate, deleteCard, openCardImage, likeCard));
 
   addCardFormElement.reset();
-  modal.closeModal(addCardModal);
+  closeModal(addCardModal);
 });
