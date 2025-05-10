@@ -42,6 +42,11 @@ export function createCard(data, template, deleteCardCallback, openCardImageCall
   });
   fragment.querySelector('.card__title').textContent = data.name;
 
+  const likeButton = fragment.querySelector('.card__like-button');
+  likeButton.addEventListener('click', () => {
+    likeCardCallback(likeButton);
+  });
+
   cardImage.addEventListener('click', () => {
     openCardImageCallback(cardImage.src, cardImage.name);
   });
@@ -64,6 +69,6 @@ export function openCardImageCallback(cardImageSrc, cardImageName) {
   modal.openModal(cardImageModal);
 }
 
-export function likeCardCallback(cardItem) {
-  console.log(cardItem);
+export function likeCardCallback(button) {
+  button.classList.toggle('card__like-button_is-active');
 }
