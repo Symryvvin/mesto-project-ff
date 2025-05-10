@@ -2,7 +2,6 @@ export function openModal(modal) {
   modal.classList.add('popup_is-opened');
 
   function closeModalEsc(e) {
-    console.log('sds');
     if (e.key === 'Escape') {
       closeModal(modal, closeModalEsc);
     }
