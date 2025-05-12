@@ -2,7 +2,7 @@ import '../pages/index.css';
 import { createCard, deleteCard, likeCard } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfileInfo, getInitialCards } from './components/api.js';
+import { getProfileInfo, getInitialCards, updateProfile } from './components/api.js';
 
 const modals = document.querySelectorAll('.popup');
 
@@ -91,8 +91,17 @@ profileEditButton.addEventListener('click', (e) => {
 function handleProfileEditForm(e) {
   e.preventDefault();
 
-  profileTitle.textContent = profileNameInput.value;
-  profileDescription.textContent = profileDescriptionInput.value;
+  updateProfile({
+    name: profileNameInput.value,
+    about: profileDescriptionInput.value,
+  })
+    .then((res) => {
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+    })
+    .catch((err) => {
+      showError(err);
+    });
 
   closeModal(profileEditModal);
 }

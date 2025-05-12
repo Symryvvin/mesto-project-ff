@@ -59,7 +59,6 @@ function checkInputValidity(form, input, validationConfig) {
   }
 
   if (!input.validity.valid) {
-    console.log(input.validationMessage);
     showInputError(form, input, input.validationMessage, validationConfig.inputErrorClass, validationConfig.errorClass);
   } else {
     hideInputError(form, input, validationConfig.inputErrorClass, validationConfig.errorClass);
