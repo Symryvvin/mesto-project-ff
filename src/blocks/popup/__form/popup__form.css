@@ -1,3 +1,9 @@
 .popup__form {
   margin-top: 27px;
 }
+
+.popup__form-field {
+  position: relative;
+  display: block;
+  margin-bottom: 20px;
+}
