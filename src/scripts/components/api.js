@@ -66,3 +66,20 @@ export const updateProfile = (jsonData) => {
     return errorResponseHandle(response);
   });
 };
+
+export const addNewCard = (jsonData) => {
+  return fetch(config.baseUrl + '/cards', {
+    method: 'POST',
+    headers: {
+      authorization: config.headers.authorization,
+      'Content-Type': config.headers.contentTypeJson,
+    },
+    body: JSON.stringify(jsonData),
+  }).then((response) => {
+    if (response.ok && isApplicationJsonResponse(response)) {
+      return response.json();
+    }
+
+    return errorResponseHandle(response);
+  });
+};

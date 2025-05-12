@@ -2,7 +2,7 @@ import '../pages/index.css';
 import { createCard, deleteCard, likeCard } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfileInfo, getInitialCards, updateProfile } from './components/api.js';
+import { getProfileInfo, getInitialCards, updateProfile, addNewCard } from './components/api.js';
 
 const modals = document.querySelectorAll('.popup');
 
@@ -122,9 +122,12 @@ function handleAddCardForm(e) {
     link: linkInput.value,
   };
 
-  cardContainer.prepend(createCard(cardData, cardTemplate, deleteCard, openCardImage, likeCard));
+  addNewCard(cardData).then((card) => {
+    cardContainer.prepend(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard));
 
-  addCardFormElement.reset();
+    addCardFormElement.reset();
+  });
+
   closeModal(addCardModal);
 }
 
