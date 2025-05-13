@@ -1,8 +1,8 @@
 import '../pages/index.css';
-import { createCard, deleteCard, likeCard } from './components/card.js';
+import { createCard, isLikedByMe } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfileInfo, getInitialCards, updateProfile, addNewCard } from './components/api.js';
+import { getProfileInfo, getInitialCards, updateProfile, addNewCard, deleteCardById, likeCardById, unlikeCardById } from './components/api.js';
 
 const modals = document.querySelectorAll('.popup');
 
@@ -32,6 +32,8 @@ const linkInput = addCardModal.querySelector('input[name=link]');
 const errorModal = document.querySelector('.popup_type_error');
 const errorMessage = document.querySelector('.popup__error-message');
 
+let userId;
+
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -48,14 +50,15 @@ Promise.all([getProfileInfo(), getInitialCards()])
     profileTitle.textContent = user.name;
     profileDescription.textContent = user.about;
     profileAvatar.src = user.avatar;
+    userId = user._id;
 
     const cards = res[1];
 
     cards.forEach((card) => {
-      cardContainer.append(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard));
+      cardContainer.append(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard, userId));
     });
   })
-  .catch((err) => showError(err));
+  .catch(showError);
 
 function showError(err) {
   errorMessage.textContent = err;
@@ -99,9 +102,7 @@ function handleProfileEditForm(e) {
       profileTitle.textContent = res.name;
       profileDescription.textContent = res.about;
     })
-    .catch((err) => {
-      showError(err);
-    });
+    .catch(showError);
 
   closeModal(profileEditModal);
 }
@@ -122,15 +123,42 @@ function handleAddCardForm(e) {
     link: linkInput.value,
   };
 
-  addNewCard(cardData).then((card) => {
-    cardContainer.prepend(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard));
+  //https://cs12.pikabu.ru/post_img/big/2021/02/14/10/1613320668138043361.jpg
+  addNewCard(cardData)
+    .then((card) => {
+      cardContainer.prepend(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard, userId));
 
-    addCardFormElement.reset();
-  });
+      addCardFormElement.reset();
+    })
+    .catch(showError);
 
   closeModal(addCardModal);
 }
 
 addCardFormElement.addEventListener('submit', handleAddCardForm);
+
+function deleteCard(cardId, card) {
+  deleteCardById(cardId)
+    .then(() => {
+      card.remove();
+    })
+    .catch(showError);
+}
+
+function likeCard(card, likeButton, likeCounter) {
+  if (isLikedByMe(card.likes, userId)) {
+    unlikeCardById(card._id).then((response) => {
+      card.likes = response.likes;
+      likeCounter.textContent = card.likes.length;
+      likeButton.classList.remove('card__like-button_is-active');
+    });
+  } else {
+    likeCardById(card._id).then((response) => {
+      card.likes = response.likes;
+      likeCounter.textContent = card.likes.length;
+      likeButton.classList.add('card__like-button_is-active');
+    });
+  }
+}
 
 enableValidation(validationConfig);

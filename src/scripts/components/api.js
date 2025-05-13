@@ -7,19 +7,21 @@ const config = {
 };
 
 export const getProfileInfo = () => {
-  return fetch(config.baseUrl + '/users/me', {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'GET',
     headers: {
       authorization: config.headers.authorization,
     },
-  }).then((response) => {
-    if (response.ok && isApplicationJsonResponse(response)) {
-      return response.json();
-    }
-
-    return errorResponseHandle(response);
-  });
+  }).then(handleApiResponse);
 };
+
+function handleApiResponse(response) {
+  if (response.ok && isApplicationJsonResponse(response)) {
+    return response.json();
+  }
+
+  return errorResponseHandle(response);
+}
 
 function isApplicationJsonResponse(response) {
   return response.headers.get('content-type').includes('application/json');
@@ -36,50 +38,60 @@ function errorResponseHandle(response) {
 }
 
 export const getInitialCards = () => {
-  return fetch(config.baseUrl + '/cards', {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'GET',
     headers: {
       authorization: config.headers.authorization,
     },
-  }).then((response) => {
-    if (response.ok && isApplicationJsonResponse(response)) {
-      return response.json();
-    }
-
-    return errorResponseHandle(response);
-  });
+  }).then(handleApiResponse);
 };
 
 export const updateProfile = (jsonData) => {
-  return fetch(config.baseUrl + '/users/me', {
+  return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: {
       authorization: config.headers.authorization,
       'Content-Type': config.headers.contentTypeJson,
     },
     body: JSON.stringify(jsonData),
-  }).then((response) => {
-    if (response.ok && isApplicationJsonResponse(response)) {
-      return response.json();
-    }
-
-    return errorResponseHandle(response);
-  });
+  }).then(handleApiResponse);
 };
 
 export const addNewCard = (jsonData) => {
-  return fetch(config.baseUrl + '/cards', {
+  return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: {
       authorization: config.headers.authorization,
       'Content-Type': config.headers.contentTypeJson,
     },
     body: JSON.stringify(jsonData),
-  }).then((response) => {
-    if (response.ok && isApplicationJsonResponse(response)) {
-      return response.json();
-    }
+  }).then(handleApiResponse);
+};
 
-    return errorResponseHandle(response);
-  });
+export const deleteCardById = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: {
+      authorization: config.headers.authorization,
+      'Content-Type': config.headers.contentTypeJson,
+    },
+  }).then(handleApiResponse);
+};
+
+export const likeCardById = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: {
+      authorization: config.headers.authorization,
+    },
+  }).then(handleApiResponse);
+};
+
+export const unlikeCardById = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: {
+      authorization: config.headers.authorization,
+    },
+  }).then(handleApiResponse);
 };
