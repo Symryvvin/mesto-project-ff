@@ -73,7 +73,6 @@ export const deleteCardById = (cardId) => {
     method: 'DELETE',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers.contentTypeJson,
     },
   }).then(handleApiResponse);
 };

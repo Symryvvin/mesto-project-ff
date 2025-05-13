@@ -107,6 +107,8 @@ profileEditButton.addEventListener('click', (e) => {
 function handleProfileEditForm(e) {
   e.preventDefault();
 
+  setSubmitButtonText(profileEditFormElement, 'Сохранение...');
+
   updateProfile({
     name: profileNameInput.value,
     about: profileDescriptionInput.value,
@@ -115,12 +117,17 @@ function handleProfileEditForm(e) {
       profileTitle.textContent = res.name;
       profileDescription.textContent = res.about;
     })
-    .catch(showError);
+    .catch(showError)
+    .finally(() => setSubmitButtonText(profileEditFormElement, 'Сохранить'));
 
   closeModal(profileEditModal);
 }
 
 profileEditFormElement.addEventListener('submit', handleProfileEditForm);
+
+function setSubmitButtonText(form, text) {
+  form.querySelector('.popup__button').textContent = text;
+}
 
 addCardButton.addEventListener('click', (e) => {
   clearValidation(addCardFormElement, validationConfig);
@@ -130,6 +137,8 @@ addCardButton.addEventListener('click', (e) => {
 
 function handleAddCardForm(e) {
   e.preventDefault();
+
+  setSubmitButtonText(addCardFormElement, 'Сохранение...');
 
   const cardData = {
     name: placeNameInput.value,
@@ -142,7 +151,8 @@ function handleAddCardForm(e) {
 
       addCardFormElement.reset();
     })
-    .catch(showError);
+    .catch(showError)
+    .finally(() => setSubmitButtonText(addCardFormElement, 'Сохранить'));
 
   closeModal(addCardModal);
 }
@@ -186,13 +196,16 @@ profileEditAvatarFormElement.addEventListener('submit', handleProfileEditAvatarF
 function handleProfileEditAvatarForm(e) {
   e.preventDefault();
 
+  setSubmitButtonText(profileEditAvatarFormElement, 'Сохранение...');
+
   updateProfileAvatar({
     avatar: profileAvatarLinkInput.value,
   })
     .then((response) => {
       profileAvatar.src = response.avatar;
     })
-    .catch(showError);
+    .catch(showError)
+    .finally(() => setSubmitButtonText(profileEditAvatarFormElement, 'Сохранить'));
 
   closeModal(profileEditAvatarModal);
 }
