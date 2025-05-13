@@ -38,6 +38,8 @@ const profileDescriptionInput = profileEditModal.querySelector('input[name=descr
 const addCardButton = document.querySelector('.profile__add-button');
 const addCardModal = document.querySelector('.popup_type_new-card');
 const addCardFormElement = document.querySelector('.popup__form[name=new-place]');
+const deleteCardConfirmModal = document.querySelector('.popup_type_delete_confirm');
+const deleteCardConfirmFormElement = deleteCardConfirmModal.querySelector('.popup__form[name=delete-confirm]');
 
 const placeNameInput = addCardModal.querySelector('input[name=place-name]');
 const linkInput = addCardModal.querySelector('input[name=link]');
@@ -46,6 +48,7 @@ const errorModal = document.querySelector('.popup_type_error');
 const errorMessage = document.querySelector('.popup__error-message');
 
 let userId;
+let handleSubmitConfirmModal;
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -160,11 +163,22 @@ function handleAddCardForm(e) {
 addCardFormElement.addEventListener('submit', handleAddCardForm);
 
 function deleteCard(cardId, card) {
-  deleteCardById(cardId)
-    .then(() => {
-      card.remove();
-    })
-    .catch(showError);
+  deleteCardConfirmFormElement.removeEventListener('submit', handleSubmitConfirmModal);
+
+  handleSubmitConfirmModal = function () {
+    deleteCardById(cardId)
+      .then(() => {
+        card.remove();
+        deleteCardConfirmFormElement.removeEventListener('submit', handleSubmitConfirmModal);
+      })
+      .catch(showError);
+
+    closeModal(deleteCardConfirmModal);
+  };
+
+  deleteCardConfirmFormElement.addEventListener('submit', handleSubmitConfirmModal);
+
+  openModal(deleteCardConfirmModal);
 }
 
 function likeCard(card, likeButton, likeCounter) {
