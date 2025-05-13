@@ -2,7 +2,16 @@ import '../pages/index.css';
 import { createCard, isLikedByMe } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfileInfo, getInitialCards, updateProfile, addNewCard, deleteCardById, likeCardById, unlikeCardById } from './components/api.js';
+import {
+  getProfileInfo,
+  getInitialCards,
+  updateProfile,
+  addNewCard,
+  deleteCardById,
+  likeCardById,
+  unlikeCardById,
+  updateProfileAvatar,
+} from './components/api.js';
 
 const modals = document.querySelectorAll('.popup');
 
@@ -15,9 +24,13 @@ const cardCaptionElement = cardImageModal.querySelector('.popup__caption');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileEditModal = document.querySelector('.popup_type_edit');
 const profileEditFormElement = document.querySelector('.popup__form[name=edit-profile]');
+const profileAvatarContainer = document.querySelector('.profile__image-container');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 const profileAvatar = document.querySelector('.profile__image');
+const profileEditAvatarModal = document.querySelector('.popup_type_avatar');
+const profileAvatarLinkInput = profileEditAvatarModal.querySelector('input[name=link]');
+const profileEditAvatarFormElement = profileEditAvatarModal.querySelector('.popup__form[name=edit-avatar]');
 
 const profileNameInput = profileEditModal.querySelector('input[name=name]');
 const profileDescriptionInput = profileEditModal.querySelector('input[name=description]');
@@ -123,7 +136,6 @@ function handleAddCardForm(e) {
     link: linkInput.value,
   };
 
-  //https://cs12.pikabu.ru/post_img/big/2021/02/14/10/1613320668138043361.jpg
   addNewCard(cardData)
     .then((card) => {
       cardContainer.prepend(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard, userId));
@@ -159,6 +171,30 @@ function likeCard(card, likeButton, likeCounter) {
       likeButton.classList.add('card__like-button_is-active');
     });
   }
+}
+
+profileAvatarContainer.addEventListener('click', (e) => {
+  profileAvatarLinkInput.value = profileAvatar.src;
+
+  clearValidation(profileEditAvatarFormElement, validationConfig);
+
+  openModal(profileEditAvatarModal);
+});
+
+profileEditAvatarFormElement.addEventListener('submit', handleProfileEditAvatarForm);
+
+function handleProfileEditAvatarForm(e) {
+  e.preventDefault();
+
+  updateProfileAvatar({
+    avatar: profileAvatarLinkInput.value,
+  })
+    .then((response) => {
+      profileAvatar.src = response.avatar;
+    })
+    .catch(showError);
+
+  closeModal(profileEditAvatarModal);
 }
 
 enableValidation(validationConfig);

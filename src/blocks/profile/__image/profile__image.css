@@ -1,12 +1,33 @@
-.profile__image {
+.profile__image-container {
+  position: relative;
   width: 120px;
   height: 120px;
+  margin: 0 29px 0 0;
+}
+
+.profile__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  margin: 0 29px 0 0;
+}
+
+.profile__image-overlay {
+  visibility: hidden;
+  background: transparent url('../../../images/edit-avatar-icon.svg') center no-repeat;
+  position: absolute;
+  inset: 0;
+}
+
+.profile__image-container:hover .profile__image-overlay {
+  visibility: visible;
+}
+
+.profile__image-container:hover .profile__image {
+  opacity: 0.2;
 }
 
 @media screen and (max-width: 740px) {

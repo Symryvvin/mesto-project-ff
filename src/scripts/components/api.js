@@ -95,3 +95,14 @@ export const unlikeCardById = (cardId) => {
     },
   }).then(handleApiResponse);
 };
+
+export const updateProfileAvatar = (data) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: {
+      authorization: config.headers.authorization,
+      'Content-Type': config.headers.contentTypeJson,
+    },
+    body: JSON.stringify(data),
+  }).then(handleApiResponse);
+};
