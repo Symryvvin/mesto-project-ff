@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, deleteCard, isLikedByMe } from './components/card.js';
+import { createCard, deleteCard, likeCard, isLikedByMe } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
 import {
@@ -72,7 +72,7 @@ Promise.all([getProfileInfo(), getInitialCards()])
     const cards = res[1];
 
     cards.forEach((card) => {
-      cardContainer.append(createCard(card, cardTemplate, onDeleteCardClick, openCardImage, likeCard, userId));
+      cardContainer.append(createCard(card, cardTemplate, onDeleteCardClick, openCardImage, onLikeCardClick, userId));
     });
   })
   .catch(showError);
@@ -118,11 +118,11 @@ function handleProfileEditForm(e) {
     .then((res) => {
       profileTitle.textContent = res.name;
       profileDescription.textContent = res.about;
+
+      closeModal(profileEditModal);
     })
     .catch(showError)
     .finally(() => setSubmitButtonText(profileEditFormElement, 'Сохранить'));
-
-  closeModal(profileEditModal);
 }
 
 profileEditFormElement.addEventListener('submit', handleProfileEditForm);
@@ -144,14 +144,14 @@ function handleAddCardForm(e) {
 
   addNewCard(placeNameInput.value, linkInput.value)
     .then((card) => {
-      cardContainer.prepend(createCard(card, cardTemplate, onDeleteCardClick, openCardImage, likeCard, userId));
+      cardContainer.prepend(createCard(card, cardTemplate, onDeleteCardClick, openCardImage, onLikeCardClick, userId));
 
       addCardFormElement.reset();
+
+      closeModal(addCardModal);
     })
     .catch(showError)
     .finally(() => setSubmitButtonText(addCardFormElement, 'Сохранить'));
-
-  closeModal(addCardModal);
 }
 
 addCardFormElement.addEventListener('submit', handleAddCardForm);
@@ -163,10 +163,10 @@ function onDeleteCardClick(cardId, card) {
     deleteCardById(cardId)
       .then(() => {
         deleteCard(card);
+
+        closeModal(deleteCardConfirmModal);
       })
       .catch(showError);
-
-    closeModal(deleteCardConfirmModal);
   };
 
   deleteCardConfirmFormElement.addEventListener('submit', handleSubmitConfirmModal);
@@ -174,19 +174,19 @@ function onDeleteCardClick(cardId, card) {
   openModal(deleteCardConfirmModal);
 }
 
-function likeCard(card, likeButton, likeCounter) {
+function onLikeCardClick(card, likeButton, likeCounter) {
   if (isLikedByMe(card.likes, userId)) {
-    unlikeCardById(card._id).then((response) => {
-      card.likes = response.likes;
-      likeCounter.textContent = card.likes.length;
-      likeButton.classList.remove('card__like-button_is-active');
-    });
+    unlikeCardById(card._id)
+      .then((response) => {
+        likeCard(card, response.likes, likeButton, likeCounter, false);
+      })
+      .catch(showError);
   } else {
-    likeCardById(card._id).then((response) => {
-      card.likes = response.likes;
-      likeCounter.textContent = card.likes.length;
-      likeButton.classList.add('card__like-button_is-active');
-    });
+    likeCardById(card._id)
+      .then((response) => {
+        likeCard(card, response.likes, likeButton, likeCounter, true);
+      })
+      .catch(showError);
   }
 }
 
@@ -208,11 +208,11 @@ function handleProfileEditAvatarForm(e) {
   updateProfileAvatar(profileAvatarLinkInput.value)
     .then((response) => {
       profileAvatar.src = response.avatar;
+
+      closeModal(profileEditAvatarModal);
     })
     .catch(showError)
     .finally(() => setSubmitButtonText(profileEditAvatarFormElement, 'Сохранить'));
-
-  closeModal(profileEditAvatarModal);
 }
 
 enableValidation(validationConfig);

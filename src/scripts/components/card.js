@@ -26,7 +26,7 @@ export function createCard(data, template, deleteCardCallback, openCardImageCall
     likeButton.classList.add('card__like-button_is-active');
   }
   likeButton.addEventListener('click', () => {
-    likeCardCallback(data, likeButton, likeCounter);
+    likeCardCallback(data, likeCounter, likeButton);
   });
 
   cardImage.addEventListener('click', () => {
@@ -34,6 +34,16 @@ export function createCard(data, template, deleteCardCallback, openCardImageCall
   });
 
   return card;
+}
+
+export function likeCard(card, likes, likeCounter, likeButton, isLiked) {
+  card.likes = likes;
+  likeCounter.textContent = likes.length;
+  if (isLiked) {
+    likeButton.classList.add('card__like-button_is-active');
+  } else {
+    likeButton.classList.remove('card__like-button_is-active');
+  }
 }
 
 export function isLikedByMe(likes, currentUserId) {
