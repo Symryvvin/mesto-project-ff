@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, isLikedByMe } from './components/card.js';
+import { createCard, deleteCard, isLikedByMe } from './components/card.js';
 import { closeModal, openModal } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
 import {
@@ -45,7 +45,8 @@ const placeNameInput = addCardModal.querySelector('input[name=place-name]');
 const linkInput = addCardModal.querySelector('input[name=link]');
 
 const errorModal = document.querySelector('.popup_type_error');
-const errorMessage = document.querySelector('.popup__error-message');
+const errorTitle = errorModal.querySelector('.popup__title');
+const errorMessage = errorModal.querySelector('.popup__error-message');
 
 let userId;
 let handleSubmitConfirmModal;
@@ -71,13 +72,14 @@ Promise.all([getProfileInfo(), getInitialCards()])
     const cards = res[1];
 
     cards.forEach((card) => {
-      cardContainer.append(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard, userId));
+      cardContainer.append(createCard(card, cardTemplate, onDeleteCardClick, openCardImage, likeCard, userId));
     });
   })
   .catch(showError);
 
 function showError(err) {
-  errorMessage.textContent = err;
+  errorTitle.textContent = `Ошибка ${err.code}`;
+  errorMessage.textContent = err.message;
 
   openModal(errorModal);
 }
@@ -112,10 +114,7 @@ function handleProfileEditForm(e) {
 
   setSubmitButtonText(profileEditFormElement, 'Сохранение...');
 
-  updateProfile({
-    name: profileNameInput.value,
-    about: profileDescriptionInput.value,
-  })
+  updateProfile(profileNameInput.value, profileDescriptionInput.value)
     .then((res) => {
       profileTitle.textContent = res.name;
       profileDescription.textContent = res.about;
@@ -143,14 +142,9 @@ function handleAddCardForm(e) {
 
   setSubmitButtonText(addCardFormElement, 'Сохранение...');
 
-  const cardData = {
-    name: placeNameInput.value,
-    link: linkInput.value,
-  };
-
-  addNewCard(cardData)
+  addNewCard(placeNameInput.value, linkInput.value)
     .then((card) => {
-      cardContainer.prepend(createCard(card, cardTemplate, deleteCard, openCardImage, likeCard, userId));
+      cardContainer.prepend(createCard(card, cardTemplate, onDeleteCardClick, openCardImage, likeCard, userId));
 
       addCardFormElement.reset();
     })
@@ -162,14 +156,13 @@ function handleAddCardForm(e) {
 
 addCardFormElement.addEventListener('submit', handleAddCardForm);
 
-function deleteCard(cardId, card) {
+function onDeleteCardClick(cardId, card) {
   deleteCardConfirmFormElement.removeEventListener('submit', handleSubmitConfirmModal);
 
   handleSubmitConfirmModal = function () {
     deleteCardById(cardId)
       .then(() => {
-        card.remove();
-        deleteCardConfirmFormElement.removeEventListener('submit', handleSubmitConfirmModal);
+        deleteCard(card);
       })
       .catch(showError);
 
@@ -212,9 +205,7 @@ function handleProfileEditAvatarForm(e) {
 
   setSubmitButtonText(profileEditAvatarFormElement, 'Сохранение...');
 
-  updateProfileAvatar({
-    avatar: profileAvatarLinkInput.value,
-  })
+  updateProfileAvatar(profileAvatarLinkInput.value)
     .then((response) => {
       profileAvatar.src = response.avatar;
     })

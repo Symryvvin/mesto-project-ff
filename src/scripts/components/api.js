@@ -30,11 +30,17 @@ function isApplicationJsonResponse(response) {
 function errorResponseHandle(response) {
   if (isApplicationJsonResponse(response)) {
     return response.json().then((err) => {
-      return Promise.reject(`Код ${response.status}, ${err.message}`);
+      return Promise.reject({
+        code: response.status,
+        message: err.message === null ? 'Непредвиденная ошибка' : err.message,
+      });
     });
   }
 
-  return Promise.reject(`Код: ${res.status}. При выполнении запроса: ${res.url} возникла непредвиденная ошибка`);
+  return Promise.reject({
+    code: response.status,
+    message: `При выполнении запроса: ${res.url} возникла непредвиденная ошибка`,
+  });
 }
 
 export const getInitialCards = () => {
@@ -46,25 +52,31 @@ export const getInitialCards = () => {
   }).then(handleApiResponse);
 };
 
-export const updateProfile = (jsonData) => {
+export const updateProfile = (profileName, profileDescription) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: {
       authorization: config.headers.authorization,
       'Content-Type': config.headers.contentTypeJson,
     },
-    body: JSON.stringify(jsonData),
+    body: JSON.stringify({
+      name: profileName,
+      about: profileDescription,
+    }),
   }).then(handleApiResponse);
 };
 
-export const addNewCard = (jsonData) => {
+export const addNewCard = (cardName, cardLink) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: {
       authorization: config.headers.authorization,
       'Content-Type': config.headers.contentTypeJson,
     },
-    body: JSON.stringify(jsonData),
+    body: JSON.stringify({
+      name: cardName,
+      link: cardLink,
+    }),
   }).then(handleApiResponse);
 };
 
@@ -95,13 +107,15 @@ export const unlikeCardById = (cardId) => {
   }).then(handleApiResponse);
 };
 
-export const updateProfileAvatar = (data) => {
+export const updateProfileAvatar = (avatarLink) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: {
       authorization: config.headers.authorization,
       'Content-Type': config.headers.contentTypeJson,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      avatar: avatarLink,
+    }),
   }).then(handleApiResponse);
 };
